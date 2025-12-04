@@ -1,16 +1,19 @@
 using System;
+using System.Runtime;
 using System.Runtime.Serialization.Formatters;
+using System.Text;
 
 namespace FehlaRpg
 {
     static class CanvasRenderer
     {
+        
         public static int canvasX = 100; // weite, columns
         public static int canvasY = 40; // höhe, rows
         public static char[,] canvasBucket = new char[canvasX, canvasY];
 
         // leert und ersetzt jede zelle mit null oder angegebenem char
-        public static void ClearCanvas(char fill = ' ')
+        public static void ClearCanvasBucket(char fill = ' ')
         {
             for (int y = 0; y < canvasY; y++)
                 for (int x = 0; x < canvasX; x++)
@@ -29,6 +32,7 @@ namespace FehlaRpg
         // bereitet den canvas als string zum ausgeben vor und gibt ihn zurück
         public static string RenderCanvas()
         {
+            Console.SetCursorPosition(0, 0); // setzt console cursor and den anfang, damit überschrieben wird statt neue zeilen zu erstellen
             var sb = new System.Text.StringBuilder(canvasX * canvasY + canvasY);
             for (int y = 0; y < canvasY; y++) // rows
             {
@@ -39,7 +43,7 @@ namespace FehlaRpg
             return sb.ToString(); // gibt den fertigen string zurück
         }
 
-        // DrawString(x, y, string text, int maxLength) it draws any string at any position
+        // draws any string at any position of canvas, maxLength limits how many chars are drawn
         public static bool DrawString(int x, int y, string text, int maxLength)
         {
             if (text.Length > maxLength) { text = text.Substring(0, maxLength); } // truncate text if too long
@@ -52,7 +56,7 @@ namespace FehlaRpg
             return placedAny; // returns true if at least one char was placed on canvas
         }
 
-        // DrawBox(x, y, width, height, char fill) it draws a rectangle at any position with customizable chars for corners and sides, fills space with a char
+        // draws a rectangle at any position with customizable chars for corners and sides, fills space with a char (style is fixed for now)
         public static bool DrawBox(int startX, int startY, int width, int height)
         {
             // chars that are used to draw the rectangle
@@ -94,13 +98,64 @@ namespace FehlaRpg
             return placedAny; // returns true if at least one char was placed on canvas
         }
 
+        // DrawSpeechBubble(x, y, width, height, string paragraph) it draws a speech bubble with word-wrapping and pagination for long text
+        public static void DrawSpeechBubble(int startX, int startY, int boxWidth, int boxHeight, string paragraph)
+        {
+            int maxLineLength = boxWidth - 3; // leave space for box borders
 
-        /*
-        // output test
-        ClearCanvas('.');                    // fill with visible filler
+            // Split into words
+            var words = paragraph.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        // render once (Console.Write writes the whole ASCII image)
-        Console.Write(RenderCanvas());
-        */
+            // Wrap words into lines
+            var lines = new List<string>();
+            string currentLine = "";
+
+            foreach (var word in words)
+            {
+                if ((currentLine.Length + word.Length + (currentLine.Length > 0 ? 1 : 0)) <= maxLineLength)
+                {
+                    currentLine += (currentLine.Length > 0 ? " " : "") + word;
+                }
+                else
+                {
+                    lines.Add(currentLine);
+                    currentLine = word;
+                }
+            }
+            if (!string.IsNullOrEmpty(currentLine)) lines.Add(currentLine);
+
+
+            // Draw Box then draw lines into it
+            int maxLinesPerBubble = 3; // how many lines are in one speechBubble
+            int linesDrawnSoFar = 0; // how many lines have that have already been drawn to canvas
+
+            while (linesDrawnSoFar < lines.Count)
+            {
+                DrawBox(startX, startY, boxWidth, boxHeight); // draw the basic rectangle for speechBubble
+
+                for (int sbLineCurrent = 0; sbLineCurrent < maxLinesPerBubble; sbLineCurrent++) // sbLineCurrent is the current line where text is supposed to be drawn 
+                {
+                    int absoluteIndex = linesDrawnSoFar + sbLineCurrent; // calculates the absolute index in "lines" list
+                    if (absoluteIndex >= lines.Count) break; // when exceeding the total amount of lines in "lines" list, break the loop to stop DrawString()
+                    DrawString(startX + 2, startY + 1 + sbLineCurrent, lines[absoluteIndex], maxLineLength); 
+                }
+                
+                Console.Write(RenderCanvas()); // render current canvas to console
+
+                // are there any more lines to draw after this bubble? if yes, wait for key press to continue
+                if (linesDrawnSoFar + maxLinesPerBubble < lines.Count)
+                {   
+                    SetPixel(startX + boxWidth - 3, startY + boxHeight - 2, '⏷');
+                    Console.OutputEncoding = Encoding.UTF8;
+                    Console.Write(RenderCanvas()); // render current canvas to console
+                    Console.ReadKey(true);
+                }
+                
+                linesDrawnSoFar += maxLinesPerBubble; // move to next chunk of 3 lines for next bubble
+            }
+
+
+        }
+
     }
 }

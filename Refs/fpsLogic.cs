@@ -16,7 +16,6 @@ class Program
 
         while (true) // The main game loop
         {
-            Console.SetCursorPosition(0, 0); // setzt den weißen konsolen-cursor nach oben links
             long startOfFrameMs = stopwatch.ElapsedMilliseconds; // frame start-zeit ist quasi 0
 
             // --- Update and Render ---
