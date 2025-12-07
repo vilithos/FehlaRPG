@@ -1,0 +1,68 @@
+{
+  "encID": "0-0",
+  "encName": "Dummy Frog",
+  "_description": "The dummy frog desires to devour a bigger thing every time, until it wants to devour the entire world. This story is about the greed integral to beings but more ridiculous.",
+  "attackPower": 5,
+  "absorbResist": 1.0,
+  "dreamHP": 50, 
+  "memoryHP": 50, 
+  "goalHP": 50,
+  "patienceTotalValue": 30,
+  "patienceLostEveryXTurn": 3,
+  "attacks": [
+    {
+        "atkID": "dream1",
+        "dmgType": "Dream",
+        "dmgSeverity": "Minor",
+        "baseDamage": 5,
+        "preActionText": "The frog was feeling hunger build up looking for prey.",
+        "postActionText": {
+            "Perfect": "Fehla's defiance made the frog lose interest in its hunger.",
+            "Neutral": "Fehla mimicked the frog's hunger, but nothing changed.",
+            "Terrible": "Fehla tried to grasp the frog's hunger, but was overwhelmed."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "memory1",
+        "dmgType": "Memory",
+        "dmgSeverity": "Minor",
+        "baseDamage": 5,
+        "preActionText": "The frog gazed at the pond, recalling the days it leapt higher than the moon.",
+        "postActionText": {
+            "Perfect": "Fehla mirrored the frog's nostalgia, and together they found peace in the memory.",
+            "Neutral": "Fehla tried to mimic the memory, but only ripples disturbed the pond's surface.",
+            "Terrible": "Fehla grasped at the memory, but the frog's longing turned to sorrow, darkening the water."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "goal1",
+        "dmgType": "Goal",
+        "dmgSeverity": "Minor",
+        "baseDamage": 10,
+        "preActionText": "The frog fixed its eyes on a distant, glowing fly... blinking once.",
+        "postActionText": {
+            "Perfect": "Fehla grasped the frog's ambition, helping it reach the shining fly.",
+            "Neutral": "Fehla mimicked the frog's focus, but the fly remained just out of reach.",
+            "Terrible": "Fehla defied the frog's goal, and the fly vanished into the night."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "special1",
+        "dmgType": "Dream",
+        "dmgSeverity": "Minor",
+        "baseDamage": 10,
+        "preActionText": "Suddenly, the frog croaked a riddle about destiny and freedom.",
+        "postActionText": {
+            "Perfect": "Fehla answered with silent wisdom, and the frog bowed in respect.",
+            "Neutral": "Fehla echoed the riddle, but neither understood its meaning.",
+            "Terrible": "Fehla defied the frog's goal, and the fly vanished into the night."
+        },
+        "isSpecialAttack": true,
+        "attackConditions": ["firstTurn", "driveHpBelow:0.6"],
+        "entersPoolAfterUse": false
+    }
+  ]
+}

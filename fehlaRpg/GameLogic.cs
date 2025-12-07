@@ -1,25 +1,22 @@
 using System;
+using System.Data;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.IO;
 using Microsoft.VisualBasic;
 
 namespace FehlaRpg
 {
     
     public enum Button // container mit konstanten "buttons" die aufgeruft werden können
-    {
-        None, Menu, Confirm, Next, Back
-    }
+    {None, Menu, Confirm, Next, Back}
 
-    public enum Severity
-    {
-        Blank, Minor, Moderate, Severe, Critical
-    }
+    public enum Severity{Minor, Moderate, Severe, Critical, Blank}
 
-    public enum DamageType
-    {
-        Dream, Memory, Goal
-    }
+    public enum DamageType{Dream, Memory, Goal, Meta}
+
+    public enum MatchQuality{Perfect, Neutral, Terrible, None}
 
     static class Game // =======================================================
     {
@@ -32,12 +29,14 @@ namespace FehlaRpg
 
             while (runningGame)
             {
+                
                 // TestMatchingSystem();
+                currentGameEncounter.SelectRandomAttack();
                 Player.CombatMenu();
 
                 Console.WriteLine($"Encounter - DreamHP: {currentGameEncounter.dreamHPc}, MemoryHP: {currentGameEncounter.memoryHPc}, GoalHP: {currentGameEncounter.goalHPc}");
                 Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
-
+                
             }
         }
 
@@ -118,43 +117,107 @@ namespace FehlaRpg
             }
         }
 
+        static MatchQuality GetMatchQuality(Attack encounterAttack, string playerAction)
+        {
+            DamageType encDmgType = encounterAttack.dmgType;
+
+            switch ((playerAction.ToLower(), encDmgType))
+            {
+                // perfect matches 10:0, medium MP
+                case ("defy ", DamageType.Dream):
+                case ("mimic", DamageType.Memory):
+                case ("grasp", DamageType.Goal):
+                    return MatchQuality.Perfect;
+                
+                // neutral matches 5:5, large MP
+                case ("defy ", DamageType.Goal):
+                case ("mimic", DamageType.Dream):
+                case ("grasp", DamageType.Memory):
+                    return MatchQuality.Neutral;
+
+                // terrible matches 0:10, little MP
+                case ("defy ", DamageType.Memory):
+                case ("mimic", DamageType.Goal):
+                case ("grasp", DamageType.Dream):
+                    return MatchQuality.Terrible;
+
+                // no matching at tall for items, magic and waiting
+                default:
+                    return MatchQuality.None;
+            }
+        }
+
         public static void ExecuteTurn(Encounter encounter, string playerAction)
         {
+            int encDmgTaken = 0;
+            int hopeDmgTaken = 0;
+            int mpGain = 0;
+            
             // display player action text
             Console.WriteLine(encounter.attackForThisTurn.preActionText);
 
             // check for damageType beats, 
-            bool actionBeatsAttack = DoesActionBeatAttack(encounter.attackForThisTurn, playerAction);
+            MatchQuality actionBeatsAttack = GetMatchQuality(encounter.attackForThisTurn, playerAction);
 
-            // calculate damage
-            int damageDealt = 0;
-            if (actionBeatsAttack)
+            switch (actionBeatsAttack)
             {
-                // player reaction is matches
-                damageDealt = encounter.attackForThisTurn.baseDamage;
+                case MatchQuality.Perfect:
+                    // for now this is in, but requires method that processes "perfect" actions
+                    encDmgTaken = encounter.attackForThisTurn.baseDamage;
+                    hopeDmgTaken = 0;
+                    mpGain = 10;
+                    break;
+                
+                case MatchQuality.Neutral:
+                    // requires method that processes "neutral" actions
+                    encDmgTaken = encounter.attackForThisTurn.baseDamage / 2;
+                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage / 2;
+                    mpGain = 20;
+                    break;
+                
+                case MatchQuality.Terrible:
+                    // for now this is in, but requires method that processes "Terrible" actions
+                    encDmgTaken = 0;
+                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage;
+                    mpGain = 0;
+                    break;
+                
+                case MatchQuality.None:
+                    // method that processes "none" actions because there are many different ones
+                    // such as "plots (items)", "stall", "magic (metapower)
+                    // depending on that how much mp, hp, and how much hopeDmgTaken is reduced
+                    // it could even be that a "none" action deals a specific DamageType
+                    // ==> this means a method for this is mandatory!!
+                    break;
             }
-            else
-            {
-                // player reaction is NO match
-                damageDealt = (int)(encounter.attackForThisTurn.baseDamage * 0.2m);
-            }
+
 
             // update encounter values
-            encounter.TakeDamage(damageDealt, encounter.attackForThisTurn.dmgType);
+            encounter.TakeDamage(encDmgTaken, encounter.attackForThisTurn.dmgType);
 
             // update player values HP and MP
-            Player.metapower += 10;
+            Player.hope -= hopeDmgTaken;
+            Player.metapower += mpGain;
 
             // postActionText of encounter
-            Console.WriteLine($"You dealt {damageDealt} DMG.");
+            Console.WriteLine($"You dealt {encDmgTaken} DMG. You lost {hopeDmgTaken} HP.");
+            Console.WriteLine($"Player Status: \tHP {Player.hope} \tMP {Player.metapower}");
 
             // ? not sure but is this where the indicator for the next encounter text comes???
         }
     
+        public static Encounter LoadEncounter(string filePath)
+        {
+            EncounterData encData = JsonSerializer.Deserialize<EncounterData>(File.ReadAllText(filePath));
 
+            Encounter loadedEncounter = new Encounter(  encData.encID, encData.encName, encData.attackPower, encData.dreamHP, 
+                                                        encData.memoryHP,encData.goalHP, encData.attacks);
+
+            return
+        }
     }
 
-    static class Player
+    static class Player // =================================================================
     {
         public static int hope = 100;
         public static int metapower = 0;
@@ -301,50 +364,79 @@ namespace FehlaRpg
 
     }
 
-    class Attack
+    class Attack // ===================================================================
     {
+        public string id;
         public DamageType dmgType {get;} // dream, memory, goal
         public Severity dmgSeverity; // minor, moderate, severe, critical
-        public int baseDamage; // base damage before its modified
-        public string preActionText; 
-        // string postActionText;
+        public int attackPower; // base damage of the encounter
+        public int baseDamage; // base damage of the attack before
+        public string preActionText;
+        public Dictionary<string, string> postActionText; 
+        public bool isSpecialAttack;
+        public List<string> attackConditions;
+        public bool entersPoolAfterUse;
 
+        // constructor for JSON file loading
+        public Attack(  string id, string dmgType, string dmgSeverity, int attackPower, int baseDamage, 
+                        string preActionText, Dictionary<string,string> postActionText, bool isSpecialAttack, 
+                        List<string> attackConditions, bool entersPoolAfterUse)
+        {
+            this.id = id;
+            this.dmgType = Enum.Parse<DamageType>(dmgType);
+            this.dmgSeverity = Enum.Parse<Severity>(dmgSeverity);
+            this.attackPower = attackPower;
+            this.baseDamage = baseDamage;
+            this.preActionText = preActionText; // single string
+            this.postActionText = postActionText; // dictionary
+            this.isSpecialAttack = isSpecialAttack;
+            this.attackConditions = attackConditions; // list
+            this.entersPoolAfterUse = entersPoolAfterUse;
+        }
+        
+        // Old constructor for backward compatibility
         public Attack(DamageType dmgType, Severity dmgSeverity, int baseDamage, string preActionText)
         {
             this.dmgType = dmgType;
             this.dmgSeverity = dmgSeverity;
             this.baseDamage = baseDamage;
             this.preActionText = preActionText;
+            // Leave other fields with default values
+            this.postActionText = new Dictionary<string, string>();
+            this.isSpecialAttack = false;
+            this.attackConditions = new List<string>();
+            this.entersPoolAfterUse = false;
         }
     }
 
-    class Encounter
+    class Encounter // ====================================================================
     {
-        private int encID;
+        private string encID;
         private string encName;        
-
         public Attack attackForThisTurn; // the attack the encounter will perform this turn
         int attackPower; // base attack power of the encounter
-        // double absorbResist; // (saved for later) modifies how much mp player absorbs with actions 
-        // currentAttack or something that stores the "attack" with everything thats part of an attack (damage type, severity, text before player acts, text after player acts) 
-        // pool of attacks the encounter can use, which are randomly selected during its turn
+        double absorbResist; // (saved for later) modifies how much mp player absorbs with actions         
         
+        // pool of attacks the encounter can use, which are randomly selected during its turn
+        public List<Attack> dreamAttacks = new List<Attack>();
+        public List<Attack> memoryAttacks = new List<Attack>();
+        public List<Attack> goalAttacks = new List<Attack>();
         // Note: Severity of the damage types (probably make an enum for "minor", "moderate", "severe" and "critical")
 
 
         int driveHPmax; // total sum of all 3 hp types
-        // int dreamHPmax; // max dream hp
-        // int memoryHPmax; // max memory hp
-        // int goalHPmax; // max goal hp
+        int dreamHPmax; // max dream hp
+        int memoryHPmax; // max memory hp
+        int goalHPmax; // max goal hp
 
         int driveHPc; // current sum of all 3 hp types
         public int dreamHPc; // current dream hp
         public int memoryHPc; // current memory hp
         public int goalHPc; // current goal hp
         
-        // int patienceCurrent;
-        // int patienceMax;
-        // int patienceLostPerTurn;
+        int patienceCurrent;
+        int patienceMax;
+        int patienceLostEveryXTurn;
 
         public Encounter(int encID, string encName, int attackPower, int dreamHPc, int memoryHPc, int goalHPc, Attack attack)
         {
@@ -372,11 +464,61 @@ namespace FehlaRpg
             driveHPc = dreamHPc + memoryHPc + goalHPc;
         }
 
-        public void SetCurrentAttack(Attack newAttack)
+        public void SetSpecificAttack(Attack newAttack)
         {
             attackForThisTurn = newAttack;
         }
 
+        public void SelectRandomAttack()
+        {
+            // build a list of available attack pools from the three attackType pools (which happen to be lists)
+            List<List<Attack>> availableAttackPools = new List<List<Attack>>();
+
+            // check if HP is left and if there are any attacks left inside an attack pool
+            if (dreamHPc > 0 && dreamAttacks.Count > 0){ availableAttackPools.Add(dreamAttacks);}
+            if (memoryHPc > 0 && memoryAttacks.Count > 0){ availableAttackPools.Add(memoryAttacks);}
+            if (goalHPc > 0 && goalAttacks.Count > 0){ availableAttackPools.Add(goalAttacks);}
+
+            // if no attacks are available at all, return (encounter defeated)
+            if (availableAttackPools.Count == 0) return;
+
+            // pick random available pool
+            Random rng = new Random();
+            int attackPoolIndex = rng.Next(availableAttackPools.Count);
+            List<Attack> chosenPool = availableAttackPools[attackPoolIndex];
+
+            // pick random attack from the chosen attack pool
+            int chosenAttackIndex = rng.Next(chosenPool.Count);
+            attackForThisTurn = chosenPool[chosenAttackIndex];
+
+        }
+    }
+    
+    class EncounterData
+    {
+        public string encID {get; set;}
+        public string encName {get; set;}
+        public string _description {get; set;}
+        public int attackPower {get; set;}
+        public double absorbResist {get; set;}
+        public int dreamHP {get; set;}
+        public int memoryHP {get; set;}
+        public int goalHP {get; set;}
+        public int patienceTotalValue {get; set;}
+        public int patienceLostEveryXTurn {get; set;}
+        public List<AttackData> attacks {get; set;}
+    }
+    class AttackData
+    {
+        public string atkID {get; set;}
+        public string dmgType {get; set;}
+        public string dmgSeverity {get; set;}
+        public int baseDamage {get; set;}
+        public string preActionText {get; set;}
+        public Dictionary<string,string> postActionText {get; set;}
+        public bool isSpecialAttack {get; set;}
+        public List<string> attackConditions {get; set;}
+        public bool entersPoolAfterUse {get; set;}
     }
     // npc klasse
 

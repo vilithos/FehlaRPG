@@ -7,15 +7,15 @@ namespace FehlaRpg
     {
         static void Main(string[] args)
         {
-            
+            /*
             CanvasRenderer.ClearCanvasBucket(' '); // ░ ▒ ▓ '\0' ' '
             
             CanvasRenderer.DrawSpeechBubble(10, 5, 50, 5, 
             @"Frogs are not real! They are actually government surveillance drones disguised as amphibians. Its true! The evidence is overwhelming and widely available if you know where to look."
             );
-            
+            */
 
-            // Game.RunGame();
+            Game.RunGame();
 
             /*
             int bubbleX = 10; int bubbleY = 5; 
