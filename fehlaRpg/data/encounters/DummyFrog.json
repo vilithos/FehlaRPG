@@ -9,7 +9,7 @@
   "goalHP": 50,
   "patienceTotalValue": 30,
   "patienceLostEveryXTurn": 3,
-  "attacks": [
+  "allAttacks": [
     {
         "atkID": "dream1",
         "dmgType": "Dream",

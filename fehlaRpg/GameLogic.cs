@@ -25,12 +25,11 @@ namespace FehlaRpg
 
         public static void RunGame() // container that 
         {
-            InitializeTestEncounter();
+            var path = Path.Combine("..", "..", "..", "data", "encounters", "DummyFrog.json");
+            currentGameEncounter = LoadEncounter(path);
 
-            while (runningGame)
+            while (runningGame && currentGameEncounter != null)
             {
-                
-                // TestMatchingSystem();
                 currentGameEncounter.SelectRandomAttack();
                 Player.CombatMenu();
 
@@ -38,71 +37,8 @@ namespace FehlaRpg
                 Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
                 
             }
+            Console.WriteLine("Game End.");
         }
-
-        static void TestMatchingSystem()
-        {
-            Console.WriteLine("=== TESTING MATCHING SYSTEM ===");
-
-            // Encounter uses as "dream" attack
-            Console.WriteLine("--- DREAM ATTACKS ---");
-            Attack dreamAtk = new Attack(DamageType.Dream, Severity.Minor, 10, "Encounter uses Minor Dream Attack!");
-            Encounter dreamEnc = new Encounter(0, "Dream Test", 1, 50, 50, 50, dreamAtk);
-
-            Console.WriteLine("Test 1: Defy vs Dream - expecting player to deal 10 DMG");
-            ExecuteTurn(dreamEnc,"defy ");
-            Console.WriteLine($"DreamHP after {dreamEnc.dreamHPc} (should be 40)\n");
-
-            Console.WriteLine("Test 2: Mimic vs Dream - expecting player to deal 2 DMG");
-            ExecuteTurn(dreamEnc,"mimic");
-            Console.WriteLine($"DreamHP after {dreamEnc.dreamHPc} (should be 38)\n");
-
-            Console.WriteLine("Test 3: Grasp vs Dream - expecting player to deal 2 DMG");
-            ExecuteTurn(dreamEnc,"grasp");
-            Console.WriteLine($"DreamHP after {dreamEnc.dreamHPc} (should be 36)\n");
-
-
-            // Encounter uses as "memory" attack
-            Console.WriteLine("--- MEMORY ATTACKS ---");
-            Attack memoryAtk = new Attack(DamageType.Memory, Severity.Minor, 10, "Encounter uses Minor Memory Attack!");
-            Encounter memoryEnc = new Encounter(0, "Memory Test", 1, 50, 50, 50, memoryAtk);
-
-            Console.WriteLine("Test 4: Mimic vs Memory - expecting player to deal 10 DMG");
-            ExecuteTurn(memoryEnc,"mimic");
-            Console.WriteLine($"MemoryHP after {memoryEnc.memoryHPc} (should be 40)\n");
-
-            Console.WriteLine("Test 5: Defy vs Memory - expecting player to deal 2 DMG");
-            ExecuteTurn(memoryEnc,"defy ");
-            Console.WriteLine($"MemoryHP after {memoryEnc.memoryHPc} (should be 38)\n");
-
-            Console.WriteLine("Test 6: Grasp vs Memory - expecting player to deal 2 DMG");
-            ExecuteTurn(memoryEnc,"grasp");
-            Console.WriteLine($"MemoryHP after {memoryEnc.memoryHPc} (should be 36)\n");
-
-
-            // Encounter uses as "goal" attack
-            Console.WriteLine("--- GOAL ATTACKS ---");
-            Attack goalAtk = new Attack(DamageType.Goal, Severity.Minor, 10, "Encounter uses Minor Goal Attack!");
-            Encounter goalEnc = new Encounter(0, "Goal Test", 1, 50, 50, 50, goalAtk);
-
-            Console.WriteLine("Test 7: Grasp vs Goal - expecting player to deal 10 DMG");
-            ExecuteTurn(goalEnc,"grasp");
-            Console.WriteLine($"GoalHP after {goalEnc.goalHPc} (should be 40)\n");
-
-            Console.WriteLine("Test 8: Defy vs Goal - expecting player to deal 2 DMG");
-            ExecuteTurn(goalEnc,"defy ");
-            Console.WriteLine($"GoalHP after {goalEnc.goalHPc} (should be 38)\n");
-
-            Console.WriteLine("Test 9: Mimic vs Goal - expecting player to deal 2 DMG");
-            ExecuteTurn(goalEnc,"mimic");
-            Console.WriteLine($"GoalHP after {goalEnc.goalHPc} (should be 36)\n");
-        }
-        static void InitializeTestEncounter()
-        {
-            Attack testAttack = new Attack(DamageType.Dream, Severity.Minor, 10, "The frog croaked while staring into the sky...");
-            Encounter testEncounter = new Encounter(0, "Dummy Frog", 1,50,50,50, testAttack);
-            currentGameEncounter = testEncounter;
-        }   
 
         static bool DoesActionBeatAttack(Attack encounterAttack, string playerAction)
         {
@@ -210,10 +146,10 @@ namespace FehlaRpg
         {
             EncounterData encData = JsonSerializer.Deserialize<EncounterData>(File.ReadAllText(filePath));
 
-            Encounter loadedEncounter = new Encounter(  encData.encID, encData.encName, encData.attackPower, encData.dreamHP, 
-                                                        encData.memoryHP,encData.goalHP, encData.attacks);
+            Encounter loadedEncounter = new Encounter(encData);
+            return loadedEncounter;
 
-            return
+            // return new Encounter(JsonSerializer.Deserialize<EncounterData>(File.ReadAllText(filePath)));
         }
     }
 
@@ -368,8 +304,8 @@ namespace FehlaRpg
     {
         public string id;
         public DamageType dmgType {get;} // dream, memory, goal
-        public Severity dmgSeverity; // minor, moderate, severe, critical
-        public int attackPower; // base damage of the encounter
+        public Severity dmgSeverity {get;} // minor, moderate, severe, critical
+        // public int attackPower; // base damage of the encounter
         public int baseDamage; // base damage of the attack before
         public string preActionText;
         public Dictionary<string, string> postActionText; 
@@ -378,6 +314,21 @@ namespace FehlaRpg
         public bool entersPoolAfterUse;
 
         // constructor for JSON file loading
+        
+        public Attack(AttackData attackData)
+        {
+            id = attackData.atkID; //"this." is not necessary because of the spiderman meme
+            dmgType = Enum.Parse<DamageType>(attackData.dmgType);
+            dmgSeverity = Enum.Parse<Severity>(attackData.dmgSeverity);
+            baseDamage = attackData.baseDamage;
+            preActionText = attackData.preActionText; // single string
+            postActionText = attackData.postActionText; // dictionary
+            isSpecialAttack = attackData.isSpecialAttack;
+            attackConditions = attackData.attackConditions; // list
+            entersPoolAfterUse = attackData.entersPoolAfterUse;
+        }
+
+        /*
         public Attack(  string id, string dmgType, string dmgSeverity, int attackPower, int baseDamage, 
                         string preActionText, Dictionary<string,string> postActionText, bool isSpecialAttack, 
                         List<string> attackConditions, bool entersPoolAfterUse)
@@ -393,7 +344,8 @@ namespace FehlaRpg
             this.attackConditions = attackConditions; // list
             this.entersPoolAfterUse = entersPoolAfterUse;
         }
-        
+        */
+
         // Old constructor for backward compatibility
         public Attack(DamageType dmgType, Severity dmgSeverity, int baseDamage, string preActionText)
         {
@@ -418,11 +370,8 @@ namespace FehlaRpg
         double absorbResist; // (saved for later) modifies how much mp player absorbs with actions         
         
         // pool of attacks the encounter can use, which are randomly selected during its turn
-        public List<Attack> dreamAttacks = new List<Attack>();
-        public List<Attack> memoryAttacks = new List<Attack>();
-        public List<Attack> goalAttacks = new List<Attack>();
         // Note: Severity of the damage types (probably make an enum for "minor", "moderate", "severe" and "critical")
-
+        public List<Attack> allAttacksPool = new List<Attack>();
 
         int driveHPmax; // total sum of all 3 hp types
         int dreamHPmax; // max dream hp
@@ -438,19 +387,25 @@ namespace FehlaRpg
         int patienceMax;
         int patienceLostEveryXTurn;
 
-        public Encounter(int encID, string encName, int attackPower, int dreamHPc, int memoryHPc, int goalHPc, Attack attack)
+
+        // string encID, string encName, int attackPower, int dreamHPc, int memoryHPc, int goalHPc, List<AttackData> allAttacksData
+        public Encounter(EncounterData encounterData)
         {
-            this.encID = encID;
-            this.encName = encName;
-            this.attackPower = attackPower;
-            
-            this.dreamHPc = dreamHPc;
-            this.memoryHPc = memoryHPc;
-            this.goalHPc = goalHPc;
+            encID = encounterData.encID;
+            encName = encounterData.encName;
+            attackPower = encounterData.attackPower;
+        
+            dreamHPc = encounterData.dreamHP;
+            memoryHPc = encounterData.memoryHP;
+            goalHPc = encounterData.goalHP;
             driveHPc = dreamHPc + memoryHPc + goalHPc;
 
-            this.attackForThisTurn = attack;
-
+            foreach (AttackData attkData in encounterData.allAttacks)
+            {
+                // this.attackForThisTurn = allAttacksData;
+                Attack attack = new Attack(attkData);
+                allAttacksPool.Add(attack);
+            }
         }
 
         public void TakeDamage(int amount, DamageType damageType)
@@ -472,24 +427,28 @@ namespace FehlaRpg
         public void SelectRandomAttack()
         {
             // build a list of available attack pools from the three attackType pools (which happen to be lists)
-            List<List<Attack>> availableAttackPools = new List<List<Attack>>();
+            List<Attack> availableAttacks = new List<Attack>();
 
             // check if HP is left and if there are any attacks left inside an attack pool
-            if (dreamHPc > 0 && dreamAttacks.Count > 0){ availableAttackPools.Add(dreamAttacks);}
-            if (memoryHPc > 0 && memoryAttacks.Count > 0){ availableAttackPools.Add(memoryAttacks);}
-            if (goalHPc > 0 && goalAttacks.Count > 0){ availableAttackPools.Add(goalAttacks);}
+            availableAttacks = allAttacksPool.Where(attack => { // check list of all attacks and .Where returns the Attacks after the switch case
+            switch(attack.dmgType) // filter and check what kind of attack it is and if its available
+                {
+                    case DamageType.Dream: return dreamHPc > 0;
+                    case DamageType.Memory: return memoryHPc > 0;
+                    case DamageType.Goal: return goalHPc > 0;
+                }
+                return false;
+            }).ToList(); // make sure its converted into a list
+           
 
             // if no attacks are available at all, return (encounter defeated)
-            if (availableAttackPools.Count == 0) return;
+            if (availableAttacks.Count == 0) return;
 
             // pick random available pool
             Random rng = new Random();
-            int attackPoolIndex = rng.Next(availableAttackPools.Count);
-            List<Attack> chosenPool = availableAttackPools[attackPoolIndex];
-
+            int attackPoolIndex = rng.Next(availableAttacks.Count);
             // pick random attack from the chosen attack pool
-            int chosenAttackIndex = rng.Next(chosenPool.Count);
-            attackForThisTurn = chosenPool[chosenAttackIndex];
+            attackForThisTurn = availableAttacks[attackPoolIndex];
 
         }
     }
@@ -506,7 +465,7 @@ namespace FehlaRpg
         public int goalHP {get; set;}
         public int patienceTotalValue {get; set;}
         public int patienceLostEveryXTurn {get; set;}
-        public List<AttackData> attacks {get; set;}
+        public List<AttackData> allAttacks {get; set;}
     }
     class AttackData
     {
@@ -520,9 +479,6 @@ namespace FehlaRpg
         public List<string> attackConditions {get; set;}
         public bool entersPoolAfterUse {get; set;}
     }
-    // npc klasse
-
-    // 
     
     // rundenbasierte logik in welcher bestimmte aktionen in einer reihenfolge ausgeführt werden
     // z.b. gegneraktion -> spieleraktion -> zwischenphase -> neue runde

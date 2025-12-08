@@ -14,7 +14,7 @@ namespace FehlaRpg
         // methode die 30 frames pro sekunde methoden ausführt
         public static void AtRealtime()
         {
-            int targetFPS = 30;
+            int targetFPS = 1;
             // The duration each frame should take in milliseconds (~33.33 ms for 30 FPS)
             double timePerFrameMs = 1000.0 / targetFPS; 
 
@@ -30,7 +30,7 @@ namespace FehlaRpg
 
 
 
-
+                
 
                 // ------------------------------------------- Ende für in Echtzeit ausgeführte Methoden und codeblöcke ----------------------------------------------------
                 
