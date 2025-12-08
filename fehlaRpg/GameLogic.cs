@@ -31,10 +31,17 @@ namespace FehlaRpg
             while (runningGame && currentGameEncounter != null)
             {
                 currentGameEncounter.SelectRandomAttack();
-                Player.CombatMenu();
+                
+                bool waitingForPlayerTurn = true;
+                while (waitingForPlayerTurn)
+                {
+                    Player.CombatMenu();
+                    
+                    Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
 
-                Console.WriteLine($"Encounter - DreamHP: {currentGameEncounter.dreamHPc}, MemoryHP: {currentGameEncounter.memoryHPc}, GoalHP: {currentGameEncounter.goalHPc}");
-                Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
+                    waitingForPlayerTurn = false;
+                }
+                Console.WriteLine($"=== {currentGameEncounter.encName} === DreamHP: {currentGameEncounter.dreamHPc}, MemoryHP: {currentGameEncounter.memoryHPc}, GoalHP: {currentGameEncounter.goalHPc}");
                 
             }
             Console.WriteLine("Game End.");
@@ -90,31 +97,33 @@ namespace FehlaRpg
             int mpGain = 0;
             
             // display player action text
-            Console.WriteLine(encounter.attackForThisTurn.preActionText);
+            Console.WriteLine(currentGameEncounter.attackForThisTurn.postActionText);
 
-            // check for damageType beats, 
-            MatchQuality actionBeatsAttack = GetMatchQuality(encounter.attackForThisTurn, playerAction);
+            // check for damageType beats 
+            MatchQuality currentMatchQuality = GetMatchQuality(encounter.attackForThisTurn, playerAction);
 
-            switch (actionBeatsAttack)
+
+            // damage calculation for both encounter AND player
+            switch (currentMatchQuality)
             {
                 case MatchQuality.Perfect:
                     // for now this is in, but requires method that processes "perfect" actions
-                    encDmgTaken = encounter.attackForThisTurn.baseDamage;
+                    encDmgTaken = encounter.attackForThisTurn.baseDamage + encounter.attackPower;
                     hopeDmgTaken = 0;
                     mpGain = 10;
                     break;
                 
                 case MatchQuality.Neutral:
                     // requires method that processes "neutral" actions
-                    encDmgTaken = encounter.attackForThisTurn.baseDamage / 2;
-                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage / 2;
+                    encDmgTaken = (encounter.attackForThisTurn.baseDamage + encounter.attackPower) / 2;
+                    hopeDmgTaken = (encounter.attackForThisTurn.baseDamage + encounter.attackPower) / 2;
                     mpGain = 20;
                     break;
                 
                 case MatchQuality.Terrible:
                     // for now this is in, but requires method that processes "Terrible" actions
                     encDmgTaken = 0;
-                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage;
+                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage + encounter.attackPower;
                     mpGain = 0;
                     break;
                 
@@ -127,7 +136,6 @@ namespace FehlaRpg
                     break;
             }
 
-
             // update encounter values
             encounter.TakeDamage(encDmgTaken, encounter.attackForThisTurn.dmgType);
 
@@ -136,10 +144,21 @@ namespace FehlaRpg
             Player.metapower += mpGain;
 
             // postActionText of encounter
-            Console.WriteLine($"You dealt {encDmgTaken} DMG. You lost {hopeDmgTaken} HP.");
-            Console.WriteLine($"Player Status: \tHP {Player.hope} \tMP {Player.metapower}");
+            string postTextKey = currentMatchQuality.ToString(); // "Perfect", "Neutral", "Terrible", "None"
+            switch (postTextKey)
+            {
+                case "Perfect": 
+                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
+                    break;
+                case "Neutral":
+                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
+                    break;
+                case "Terrible":
+                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
+                    break;
+            }
 
-            // ? not sure but is this where the indicator for the next encounter text comes???
+            Console.WriteLine($"You dealt {encDmgTaken} DMG and lost {hopeDmgTaken} HP.");
         }
     
         public static Encounter LoadEncounter(string filePath)
@@ -170,11 +189,14 @@ namespace FehlaRpg
         {
             string[] combatOptions = ["defy ", "mimic", "grasp", "magic", "plots", "stall"]; // 6 options -> 0 to 5
             string cmSelect; // stores menu option as string
+            Console.WriteLine(Game.currentGameEncounter.attackForThisTurn.preActionText); // show the attack of the encounter
 
             while (true)
             {
-                Console.WriteLine("Combat Menu: ");
+                
+                Console.WriteLine("---------- Combat Menu ----------");
 
+                // prints menu options
                 for (int i = 0; i < combatOptions.Length; i++)
                 {
                     if (i == currentMenuSelection)
@@ -186,7 +208,7 @@ namespace FehlaRpg
                         Console.ResetColor(); // Resets colors of console
                         Console.Write(" ");
                     }
-
+                    
                     else
                     {
                         // normal console colors so white on black background
@@ -206,7 +228,7 @@ namespace FehlaRpg
                         case "mimic":
                         case "grasp": 
                             Game.ExecuteTurn(Game.currentGameEncounter, cmSelect);      
-                            break;
+                            return;
 
                         case "magic": 
                             // TODO: magic submenu for "metapower" moves
@@ -221,11 +243,12 @@ namespace FehlaRpg
 
                             // for testing purposes only:
                             Game.runningGame = false;
-                            break;
+                            return;
 
                     }
                 }
-                break; // break the while loop else player is stuck after CONFIRM action
+
+                // break; // break the while loop else player is stuck after CONFIRM action
             
             }
 
@@ -363,28 +386,28 @@ namespace FehlaRpg
 
     class Encounter // ====================================================================
     {
-        private string encID;
-        private string encName;        
+        public string encID;
+        public string encName;        
         public Attack attackForThisTurn; // the attack the encounter will perform this turn
-        int attackPower; // base attack power of the encounter
-        double absorbResist; // (saved for later) modifies how much mp player absorbs with actions         
+        public int attackPower; // base attack power of the encounter
+        public double absorbResist; // (saved for later) modifies how much mp player absorbs with actions         
         
         // pool of attacks the encounter can use, which are randomly selected during its turn
         // Note: Severity of the damage types (probably make an enum for "minor", "moderate", "severe" and "critical")
         public List<Attack> allAttacksPool = new List<Attack>();
 
-        int driveHPmax; // total sum of all 3 hp types
+        public int driveHPmax; // total sum of all 3 hp types
         int dreamHPmax; // max dream hp
         int memoryHPmax; // max memory hp
         int goalHPmax; // max goal hp
 
-        int driveHPc; // current sum of all 3 hp types
+        public int driveHPc; // current sum of all 3 hp types
         public int dreamHPc; // current dream hp
         public int memoryHPc; // current memory hp
         public int goalHPc; // current goal hp
         
-        int patienceCurrent;
-        int patienceMax;
+        public int patienceCurrent;
+        public int patienceMax;
         int patienceLostEveryXTurn;
 
 

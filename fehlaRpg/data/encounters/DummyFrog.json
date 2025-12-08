@@ -40,7 +40,7 @@
         "atkID": "goal1",
         "dmgType": "Goal",
         "dmgSeverity": "Minor",
-        "baseDamage": 10,
+        "baseDamage": 5,
         "preActionText": "The frog fixed its eyes on a distant, glowing fly... blinking once.",
         "postActionText": {
             "Perfect": "Fehla grasped the frog's ambition, helping it reach the shining fly.",
