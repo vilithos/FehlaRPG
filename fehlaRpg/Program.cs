@@ -7,22 +7,28 @@ namespace FehlaRpg
     {
         static void Main(string[] args)
         {
-            /*
-            CanvasRenderer.ClearCanvasBucket(' '); // ░ ▒ ▓ '\0' ' '
-            CanvasRenderer.DrawBox(0,0,100,40);
-            CanvasRenderer.DrawSpeechBubble(10, 30, 80, 5, 
-            @"Frogs are not real! They are actually government surveillance drones disguised as amphibians. Its true! The evidence is overwhelming and widely available if you know where to look."
-            );
-            */
+            Console.WindowWidth = 100;
+            Console.WindowHeight = 30;
+            Console.BufferWidth = 100;
+            Console.BufferHeight = 30;
 
+            Console.CursorVisible = false;  // Hide the cursor
+            
+            CanvasRenderer.ClearCanvasBucket(' '); // ░ ▒ ▓ '\0' ' '
+            CanvasRenderer.DrawBox(0,0,100,30); // game 
+
+            CanvasRenderer.DrawTitleScreen();
+            
+            CanvasRenderer.DrawGameOverScreen();
+            
             //DONE! 1. preAttackText must appear BEFORE combat menu 
             //DONE! --> damage calculation must work 
             // 6. game over/win conditions
             // 2. make combat appear through CanvasRenderer()
             // 3. Make dummy frog Ascii appear on screen
-            // 4. add healthbar to dummy frog
-            // 5. make combat hud appear with hp/mp
-          
+            //DONE! 4. add healthbar to dummy frog
+            //DONE! 5. make combat hud appear with hp/mp
+            // run debugger
 
             Game.RunGame();
 

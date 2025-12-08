@@ -22,6 +22,7 @@ namespace FehlaRpg
     {
         internal static bool runningGame = true;
         public static Encounter currentGameEncounter;
+        public static string endingSpeechBubble;
 
         public static void RunGame() // container that 
         {
@@ -30,29 +31,74 @@ namespace FehlaRpg
 
             while (runningGame && currentGameEncounter != null)
             {
+                // selects a random encounter attack for this turn
                 currentGameEncounter.SelectRandomAttack();
                 
+                // encounter preAttackText appears, this is the indicator for the player to react to
+                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.preActionText);
+
+                // player turn
                 bool waitingForPlayerTurn = true;
                 while (waitingForPlayerTurn)
                 {
                     Player.CombatMenu();
-                    
-                    Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
+                    // debugging output
+                    // Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
 
                     waitingForPlayerTurn = false;
                 }
-                Console.WriteLine($"=== {currentGameEncounter.encName} === DreamHP: {currentGameEncounter.dreamHPc}, MemoryHP: {currentGameEncounter.memoryHPc}, GoalHP: {currentGameEncounter.goalHPc}");
+                // debugging output
+                // Console.WriteLine(  $"=== {currentGameEncounter.encName} ===[{currentGameEncounter.patienceCurrent}/{currentGameEncounter.patienceMax}]===" +
+                //                    $"DreamHP: {currentGameEncounter.dreamHPc}/{currentGameEncounter} MemoryHP: {currentGameEncounter.memoryHPc}/ GoalHP: {currentGameEncounter.goalHPc}");
                 
-                if (currentGameEncounter.patienceCurrent < 0)
+
+                // encounter postAttackText appears based on player action quality
+                MatchQuality currentMatchQuality = GetMatchQuality(currentGameEncounter.attackForThisTurn, Player.playerAction);
+                string postTextKey = currentMatchQuality.ToString(); // "Perfect", "Neutral", "Terrible", "None"
+                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.postActionText[postTextKey]);
+                /* this switchvase was used to debug the postActionText output
+                switch (postTextKey)
                 {
-                    string endingSpeechBubble = currentGameEncounter.GetEnding();
-                    // make speech bubble appear with the ending text
+                    case "Perfect": 
+                        Console.WriteLine("==>" + currentGameEncounter.attackForThisTurn.postActionText[postTextKey]);
+                        break;
+                    case "Neutral":
+                        Console.WriteLine("==>" + currentGameEncounter.attackForThisTurn.postActionText[postTextKey]);
+                        break;
+                    case "Terrible":
+                        Console.WriteLine("==>" + currentGameEncounter.attackForThisTurn.postActionText[postTextKey]);
+                        break;
+                }
+                */
+
+                // check if any ENDING conditions are met and display specific ending
+                if (currentGameEncounter.patienceCurrent <= 0) // if patience runs out
+                {
+                    string chosenEnding = currentGameEncounter.GetEnding();
+                    switch (chosenEnding)
+                    {
+                        case "endDetermination":
+                            endingSpeechBubble = currentGameEncounter.endDetermination;
+                            break;
+                        case "endSweetSpot":
+                            endingSpeechBubble = currentGameEncounter.endSweetspot;
+                            break;
+                        case "endFollower":
+                            endingSpeechBubble = currentGameEncounter.endFollower;
+                            break;
+                        case "endMadness":
+                            endingSpeechBubble = currentGameEncounter.endMadness;
+                            break;
+                    }
+
+                    CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, endingSpeechBubble);
                     // game over screen
                     // exit game loop
+                    // return to main menu
                 }
 
             }
-            Console.WriteLine("Game End.");
+            // Console.WriteLine("Game End."); // debug
         }
 
         static bool DoesActionBeatAttack(Attack encounterAttack, string playerAction)
@@ -105,7 +151,7 @@ namespace FehlaRpg
             int mpGain = 0;
             
             // Note: this is where item texts are outputted before calculation
-            Console.WriteLine(currentGameEncounter.attackForThisTurn.preActionText);
+            // Console.WriteLine(currentGameEncounter.attackForThisTurn.preActionText);
 
             // check for damageType beats 
             MatchQuality currentMatchQuality = GetMatchQuality(encounter.attackForThisTurn, playerAction);
@@ -151,22 +197,7 @@ namespace FehlaRpg
             Player.hope -= hopeDmgTaken;
             Player.metapower += mpGain;
 
-            // postActionText of encounter
-            string postTextKey = currentMatchQuality.ToString(); // "Perfect", "Neutral", "Terrible", "None"
-            switch (postTextKey)
-            {
-                case "Perfect": 
-                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
-                    break;
-                case "Neutral":
-                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
-                    break;
-                case "Terrible":
-                    Console.WriteLine("==>" + encounter.attackForThisTurn.postActionText[postTextKey]);
-                    break;
-            }
-
-            Console.WriteLine($"You dealt {encDmgTaken} DMG and lost {hopeDmgTaken} HP.");
+            // Console.WriteLine($"You dealt {encDmgTaken} DMG and lost {hopeDmgTaken} HP.");
         }
     
         public static Encounter LoadEncounter(string filePath)
@@ -183,8 +214,10 @@ namespace FehlaRpg
     static class Player // =================================================================
     {
         public static int hope = 100;
+        public static int hopeMax = 100;
         public static int metapower = 0;
-        static string action = "wait";
+        public static int metapowerMax = 100;
+        public static string playerAction;
         static int currentMenuSelection = 0;
         static Button pressedButton;
 
@@ -197,11 +230,12 @@ namespace FehlaRpg
         {
             string[] combatOptions = ["defy ", "mimic", "grasp", "magic", "plots", "stall"]; // 6 options -> 0 to 5
             string cmSelect; // stores menu option as string
-            Console.WriteLine(Game.currentGameEncounter.attackForThisTurn.preActionText); // show the attack of the encounter
+            // Console.WriteLine(Game.currentGameEncounter.attackForThisTurn.preActionText); // show the attack of the encounter
 
             while (true)
             {
-                
+                CanvasRenderer.DrawCombatMenu(28, 25, combatOptions, currentMenuSelection);
+                /*
                 Console.WriteLine("---------- Combat Menu ----------");
 
                 // prints menu options
@@ -224,10 +258,11 @@ namespace FehlaRpg
                     }
                 }
                 Console.WriteLine(); // new line after menu
-                
+                */
 
                 cmSelect = MenuSelectionOnce(combatOptions, false); // current combat menu selection 
-                
+                playerAction = cmSelect.ToLower(); // set player "action" string to the selected combat menu option
+
                 if (pressedButton == Button.Confirm)
                 {
                     switch (cmSelect.ToLower())
@@ -255,11 +290,8 @@ namespace FehlaRpg
 
                     }
                 }
-
                 // break; // break the while loop else player is stuck after CONFIRM action
-            
             }
-
 
         }
 
@@ -312,21 +344,6 @@ namespace FehlaRpg
 
             // gibt die selektion als string aus anhand des spezifischen elements in string[]
             return currentMenu[currentMenuSelection];
-        }
-
-        static void UpdateHP()
-        {
-            
-        }
-
-        static void UpdateMP()
-        {
-            
-        }
-
-        static void PerformAction()
-        {
-            
         }
 
     }
@@ -513,15 +530,16 @@ namespace FehlaRpg
                 turnCount = 0; // reset turn count after patience loss
             }
         }
-        public string GetEnding() // reuturns the ending string based on driveHP percentage
+        
+        public string GetEnding() // returns the ending string based on driveHP percentage
         {
             // calculate remaining driveHP percentage
             float driveHPpercent = (float)driveHPc / driveHPmax;
 
-            if (driveHPpercent > 0.6f){ return endDetermination; } // above 60% then determination ending
-            else if (driveHPpercent > 0.3f && driveHPpercent <= 0.6f){ return endSweetspot; } // between 30% and 60% then sweetspot ending
-            else if (driveHPpercent > 0.1f && driveHPpercent <= 0.3f){ return endFollower; } // between 10% and 30% then follower ending
-            else { return endMadness; } // below 10% then madness ending
+            if (driveHPpercent > 0.6f) { return endDetermination; } // above 60% then determination ending
+            else if (driveHPpercent > 0.3f && driveHPpercent <= 0.6f) { return endSweetspot; } // between 30% and 60% then sweetspot ending
+            else if (driveHPpercent > 0.1f && driveHPpercent <= 0.3f) { return endFollower; } // between 10% and 30% then follower ending
+            else { return endMadness; } // below 10% then madness ending          
         }
     }
     
@@ -556,16 +574,5 @@ namespace FehlaRpg
         public List<string> attackConditions {get; set;}
         public bool entersPoolAfterUse {get; set;}
     }
-    
-    // rundenbasierte logik in welcher bestimmte aktionen in einer reihenfolge ausgeführt werden
-    // z.b. gegneraktion -> spieleraktion -> zwischenphase -> neue runde
-
-    // spielkalkulationen wie schaden berechnen, schadensfälle abfragen
-    
-    // spielerstatus berechnen und updaten
-
-    // inventarverwaltung
-
-        
     
 }
