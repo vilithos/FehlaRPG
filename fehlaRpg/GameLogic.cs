@@ -43,6 +43,14 @@ namespace FehlaRpg
                 }
                 Console.WriteLine($"=== {currentGameEncounter.encName} === DreamHP: {currentGameEncounter.dreamHPc}, MemoryHP: {currentGameEncounter.memoryHPc}, GoalHP: {currentGameEncounter.goalHPc}");
                 
+                if (currentGameEncounter.patienceCurrent < 0)
+                {
+                    string endingSpeechBubble = currentGameEncounter.GetEnding();
+                    // make speech bubble appear with the ending text
+                    // game over screen
+                    // exit game loop
+                }
+
             }
             Console.WriteLine("Game End.");
         }
@@ -96,8 +104,8 @@ namespace FehlaRpg
             int hopeDmgTaken = 0;
             int mpGain = 0;
             
-            // display player action text
-            Console.WriteLine(currentGameEncounter.attackForThisTurn.postActionText);
+            // Note: this is where item texts are outputted before calculation
+            Console.WriteLine(currentGameEncounter.attackForThisTurn.preActionText);
 
             // check for damageType beats 
             MatchQuality currentMatchQuality = GetMatchQuality(encounter.attackForThisTurn, playerAction);
@@ -351,23 +359,6 @@ namespace FehlaRpg
             entersPoolAfterUse = attackData.entersPoolAfterUse;
         }
 
-        /*
-        public Attack(  string id, string dmgType, string dmgSeverity, int attackPower, int baseDamage, 
-                        string preActionText, Dictionary<string,string> postActionText, bool isSpecialAttack, 
-                        List<string> attackConditions, bool entersPoolAfterUse)
-        {
-            this.id = id;
-            this.dmgType = Enum.Parse<DamageType>(dmgType);
-            this.dmgSeverity = Enum.Parse<Severity>(dmgSeverity);
-            this.attackPower = attackPower;
-            this.baseDamage = baseDamage;
-            this.preActionText = preActionText; // single string
-            this.postActionText = postActionText; // dictionary
-            this.isSpecialAttack = isSpecialAttack;
-            this.attackConditions = attackConditions; // list
-            this.entersPoolAfterUse = entersPoolAfterUse;
-        }
-        */
 
         // Old constructor for backward compatibility
         public Attack(DamageType dmgType, Severity dmgSeverity, int baseDamage, string preActionText)
@@ -406,22 +397,47 @@ namespace FehlaRpg
         public int memoryHPc; // current memory hp
         public int goalHPc; // current goal hp
         
+        // patience system
         public int patienceCurrent;
         public int patienceMax;
-        int patienceLostEveryXTurn;
+        public int patienceLostEveryXTurn;
+        private int turnCount = 0;
 
 
-        // string encID, string encName, int attackPower, int dreamHPc, int memoryHPc, int goalHPc, List<AttackData> allAttacksData
+        // different possible endings based on how the encounter was defeated
+        public string endDetermination;
+        public string endSweetspot;
+        public string endFollower;
+        public string endMadness;
+
         public Encounter(EncounterData encounterData)
         {
             encID = encounterData.encID;
             encName = encounterData.encName;
             attackPower = encounterData.attackPower;
         
+            // set current hp
             dreamHPc = encounterData.dreamHP;
             memoryHPc = encounterData.memoryHP;
             goalHPc = encounterData.goalHP;
             driveHPc = dreamHPc + memoryHPc + goalHPc;
+
+            // set max hp
+            dreamHPmax = encounterData.dreamHP;
+            memoryHPmax = encounterData.memoryHP;
+            goalHPmax = encounterData.goalHP;
+            driveHPmax = dreamHPmax + memoryHPmax + goalHPmax;
+
+            // set endings
+            endDetermination = encounterData.endDetermination;
+            endSweetspot = encounterData.endSweetspot;
+            endFollower = encounterData.endFollower;
+            endMadness = encounterData.endMadness;
+
+            // set patience values
+            patienceCurrent = encounterData.patienceTotalValue;
+            patienceMax = encounterData.patienceTotalValue;
+            patienceLostEveryXTurn = encounterData.patienceLostEveryXTurn;
 
             foreach (AttackData attkData in encounterData.allAttacks)
             {
@@ -447,7 +463,7 @@ namespace FehlaRpg
             attackForThisTurn = newAttack;
         }
 
-        public void SelectRandomAttack()
+        public void SelectRandomAttack() // selects a random attack from available attack pools based on current HP types
         {
             // build a list of available attack pools from the three attackType pools (which happen to be lists)
             List<Attack> availableAttacks = new List<Attack>();
@@ -474,6 +490,39 @@ namespace FehlaRpg
             attackForThisTurn = availableAttacks[attackPoolIndex];
 
         }
+
+        public void UpdateHealth() // updates current HP and makes sure max HP is not exceeded
+        {
+            // make sure that current HP does not exceed max HP
+            if (dreamHPc > dreamHPmax) dreamHPc = dreamHPmax;
+            if (memoryHPc > memoryHPmax) memoryHPc = memoryHPmax;
+            if (goalHPc > goalHPmax) goalHPc = goalHPmax;
+
+            // update driveHPc, make sure its maximum is not exceeded
+            driveHPc = dreamHPc + memoryHPc + goalHPc;
+            if (driveHPc > driveHPmax) driveHPc = driveHPmax;
+        }
+
+        public void LosePatience() // counts turns and reduces patience accordingly
+        {
+            turnCount += 1;
+
+            if (turnCount >= patienceLostEveryXTurn)
+            {
+                patienceCurrent -= 1;
+                turnCount = 0; // reset turn count after patience loss
+            }
+        }
+        public string GetEnding() // reuturns the ending string based on driveHP percentage
+        {
+            // calculate remaining driveHP percentage
+            float driveHPpercent = (float)driveHPc / driveHPmax;
+
+            if (driveHPpercent > 0.6f){ return endDetermination; } // above 60% then determination ending
+            else if (driveHPpercent > 0.3f && driveHPpercent <= 0.6f){ return endSweetspot; } // between 30% and 60% then sweetspot ending
+            else if (driveHPpercent > 0.1f && driveHPpercent <= 0.3f){ return endFollower; } // between 10% and 30% then follower ending
+            else { return endMadness; } // below 10% then madness ending
+        }
     }
     
     class EncounterData
@@ -489,6 +538,11 @@ namespace FehlaRpg
         public int patienceTotalValue {get; set;}
         public int patienceLostEveryXTurn {get; set;}
         public List<AttackData> allAttacks {get; set;}
+
+        public string endDetermination {get; set;}
+        public string endSweetspot {get; set;}
+        public string endFollower {get; set;}
+        public string endMadness {get; set;}
     }
     class AttackData
     {

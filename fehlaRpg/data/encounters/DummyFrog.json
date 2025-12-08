@@ -9,6 +9,10 @@
   "goalHP": 50,
   "patienceTotalValue": 30,
   "patienceLostEveryXTurn": 3,
+  "endDetermination": "Nothing was able to change the frog's greedy nature, but Fehla learned one last thing before being devoured by a mighty gulp - the world is full of insatiable beings, and that's okay.",
+  "endSweetspot": "As Fehla was about to be swallowed whole, the frog paused, its eyes reflecting a newfound understanding. In that moment, Fehla shared a silent connection with the creature, realizing that even the greediest beings have their own desires and dreams. The frog smiled, cast a magic spell to not devour Fehla, but to teleport Fehla into a realm of endless possibilities.",
+  "endFollower": "While Fehla realized that the frog's nature would never change, the frog revealed its wisdom. It spoke of the imbalance of the world and how Fehla's journey was only the begining. It saw great potential in Fehla and offered its devouring powers if Fehla ever needed them. As fireflies danced around lifting Fehla into the air, the frog croaked a promise to watch over Fehla from afar.",
+  "endMadness": "At this moment the mighty frog was beaten, it no longer could stand the emptiness inside. In it's final rampaging madness, it first devoured a firefly ... then a bunny, a deer, the entire pond, then the entire forest. As the all devouring frog carved its jaws through the mountains ... it ate the sky itself, yes. The world grew silent as the frog's greed consumed everything, leaving behind an endless void. Fehla watched in horror as the frog's insatiable hunger led to the end of all things, floating in nothingness thinking of the dangers of unchecked desire.",
   "allAttacks": [
     {
         "atkID": "dream1",

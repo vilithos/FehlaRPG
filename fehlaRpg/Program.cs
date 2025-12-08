@@ -15,13 +15,14 @@ namespace FehlaRpg
             );
             */
 
-            // 1. preAttackText must appear BEFORE combat menu DONE!
-            // --> damage calculation must work
+            //DONE! 1. preAttackText must appear BEFORE combat menu 
+            //DONE! --> damage calculation must work 
+            // 6. game over/win conditions
             // 2. make combat appear through CanvasRenderer()
             // 3. Make dummy frog Ascii appear on screen
             // 4. add healthbar to dummy frog
             // 5. make combat hud appear with hp/mp
-            // 6. game over/win conditions
+          
 
             Game.RunGame();
 
