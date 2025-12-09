@@ -179,20 +179,28 @@ namespace FehlaRpg
             int encDmgTaken = 0;
             int hopeDmgTaken = 0;
             int mpGain = 0;
-            
-            // Note: this is where item texts are outputted before calculation
-            // Console.WriteLine(currentGameEncounter.attackForThisTurn.preActionText);
 
             // check for damageType beats 
             MatchQuality currentMatchQuality = GetMatchQuality(encounter.attackForThisTurn, playerAction);
-
-
+            
+            // convert severity to modifier float number
+            Severity severity = currentGameEncounter.attackForThisTurn.dmgSeverity;
+            float severityModifer = 1.0f;
+            switch (severity)
+            {
+                case Severity.Minor:    severityModifer = 0.5f;     break;
+                case Severity.Moderate: severityModifer = 1.0f;     break;
+                case Severity.Severe:   severityModifer = 1.5f;     break;
+                case Severity.Critical: severityModifer = 2.0f;     break;
+                case Severity.Blank:    severityModifer = 1.0f;     break;
+            }
+            
             // damage calculation for both encounter AND player
             switch (currentMatchQuality)
             {
                 case MatchQuality.Perfect:
                     // for now this is in, but requires method that processes "perfect" actions
-                    encDmgTaken = encounter.attackForThisTurn.baseDamage + encounter.attackPower;
+                    encDmgTaken = (int)((encounter.attackForThisTurn.baseDamage + encounter.attackPower) * severityModifer);
                     hopeDmgTaken = 0;
                     mpGain = 10;
                     break;
@@ -200,14 +208,16 @@ namespace FehlaRpg
                 case MatchQuality.Neutral:
                     // requires method that processes "neutral" actions
                     encDmgTaken = (encounter.attackForThisTurn.baseDamage + encounter.attackPower) / 2;
+                    encDmgTaken = (int)(encDmgTaken * severityModifer);
                     hopeDmgTaken = (encounter.attackForThisTurn.baseDamage + encounter.attackPower) / 2;
+                    hopeDmgTaken = (int)(hopeDmgTaken * severityModifer);
                     mpGain = 20;
                     break;
                 
                 case MatchQuality.Terrible:
                     // for now this is in, but requires method that processes "Terrible" actions
                     encDmgTaken = 0;
-                    hopeDmgTaken = encounter.attackForThisTurn.baseDamage + encounter.attackPower;
+                    hopeDmgTaken = (int)((encounter.attackForThisTurn.baseDamage + encounter.attackPower) * severityModifer);
                     mpGain = 0;
                     break;
                 

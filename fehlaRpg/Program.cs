@@ -21,11 +21,10 @@ namespace FehlaRpg
             //DONE! 1. preAttackText must appear BEFORE combat menu 
             //DONE! --> damage calculation must work 
             //DONE! 6. game over/win conditions
-            // win screen is not made yet
             //DONE! Game over screen
             //DONE! Title screen
             // Game win screen (the story continues) "Fehla ... gave comfort to the world."
-            // story bit screen
+            // story bit screen (requires encounter loading logic) --> not implemented
             // 2. make combat appear through CanvasRenderer()
             // encounter patience, driveHP bar, name, attack indicator
             //DONE! 3. Make dummy frog Ascii appear on screen

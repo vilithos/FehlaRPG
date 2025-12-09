@@ -2,7 +2,7 @@
   "encID": "0-0",
   "encName": "Dummy Frog",
     "_description": "The dummy frog desires to devour a bigger thing every time, until it wants to devour the entire world. Each gulp only widens its appetite, teaching that desire grows faster than any belly can hold. This story is about the greed integral to beings but more ridiculous, a playful warning that even innocent cravings can become cosmic hungers if left unchecked. It laughs as it swallows, learning nothing, and in that foolish joy it shows how appetites can charm us even as they lead us toward impossible ends.",
-  "attackPower": 1,
+  "attackPower": 3,
   "absorbResist": 1.0,
   "dreamHP": 50, 
   "memoryHP": 50, 
@@ -50,11 +50,37 @@
         "dmgType": "Dream",
         "dmgSeverity": "Minor",
         "baseDamage": 5,
-        "preActionText": "The frog was feeling hunger build up looking for prey, a rumble that echoed in the damp air and made every leaf quiver with expectation. Its throat bubbled with impatience, and even the insects seemed to hold their breath, waiting to see what desire would choose next.",
+        "preActionText": "The frog's eyes flutter softly in the twilight, and for a moment it remembers something small—a dream of being lighter, of floating among the stars instead of being anchored to mud. The fantasy blooms gently, a whisper of wings it never had, the feeling of wind beneath limbs that were meant for soaring. It is a fleeting wish, tender as moonlight, soon to be forgotten when hunger calls again.",
         "postActionText": {
-          "Perfect": "Fehla's defiance made the frog lose interest in its hunger, turning its craving into a curious pause that softened the tension in the air. The rumble faded, replaced by a puzzled croak, as if the frog tasted a flavor beyond appetite: restraint.",
-          "Neutral": "Fehla mimicked the frog's hunger, but nothing changed; the two hungers simply stared at each other, waiting for the other to blink first. The standoff stretched, a mirror reflecting need back upon itself until it felt almost comic.",
-          "Terrible": "Fehla tried to grasp the frog's hunger, but was overwhelmed, swallowed by the echo of a craving that had no end. The yearning coiled around Fehla's thoughts, dragging them toward a cavern where nothing could ever be enough."
+          "Perfect": "In Fehla's silent presence, the frog's small dream settles peacefully, as though finally witnessed and understood. The yearning dissolves into contentment, and the frog sinks into the pond with a quiet acceptance, the fantasy gently released into the night sky where it belongs.",
+          "Neutral": "Fehla somehow shares the dream, and for a breath both exist in that weightless realm together. The frog's croak becomes almost joyful, a strange harmony between doll and creature, as though two impossible things have found comfort in each other's company.",
+          "Terrible": "The frog's dream shatters against Fehla's silence, and the longing twists inward, becoming a gnawing ache. The frog's eyes harden—if it cannot fly, then nothing light will escape its mouth either. The hunger swells to swallow what it cannot become."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "dream2",
+        "dmgType": "Dream",
+        "dmgSeverity": "Moderate",
+        "baseDamage": 5,
+        "preActionText": "The frog's breathing deepens, and a more vivid dream takes hold—one of endless feeding, of a belly that never empties, a throat that never tires. The fantasy grows teeth and hunger becomes its own landscape: mountains of insects, rivers of sustenance, a world that exists solely to be consumed. The dream pulses with genuine yearning, a vision the frog has learned to want, to believe might be real.",
+        "postActionText": {
+          "Perfect": "Fehla's quiet comfort transforms the dream into something less monstrous—a vision where the frog could feast without emptying itself, where satisfaction exists. The frog trembles with a strange peace, as though the plushie's silence somehow offered what hunger never could: enough.",
+          "Neutral": "Fehla and the frog both experience the endless feast together, caught in a moment where abundance and yearning synchronize perfectly. For an instant, both understand what it means to want without limit, and the understanding binds them in an absurd, intimate communion.",
+          "Terrible": "The frog's dream becomes sharper, more desperate, seeing the world only through the lens of appetite now. Fehla's presence somehow amplifies the hunger rather than soothe it, and the frog's vision narrows to a single, relentless need: to consume more, to fill the unfillable void."
+        },
+        "isSpecialAttack": false
+    },
+        {
+        "atkID": "dream3",
+        "dmgType": "Dream",
+        "dmgSeverity": "Severe",
+        "baseDamage": 5,
+        "preActionText": "The frog convulses with a violent dream—a cosmos of hunger made manifest. In this vision, the frog has grown to monstrous size, swallowing oceans, devouring the very earth beneath it. The dream is intoxicating in its power, a fever fantasy where there are no limits, no boundaries, only the endless expansion of appetite. The frog's eyes glow with the intensity of this nightmare-vision, utterly consumed by the terrible beauty of its own greed.",
+        "postActionText": {
+          "Perfect": "Fehla's presence somehow anchors the frog back to reality, gently reminding it that even nightmares must end. The frog's body relaxes, the fevered dream retreating into sleep, replaced by an exhausted peace. The monster within quiets, at least for now.",
+          "Neutral": "Fehla becomes trapped in the frog's apocalyptic vision with it, both experiencing the dizzying intoxication of unbounded consumption. The shared dream is terrifying and ecstatic at once, binding them in a moment of mutual madness before reality reasserts itself.",
+          "Terrible": "Fehla's silence seems to validate the dream, and the frog emerges from the vision more convinced than ever that its monstrous fantasy is destiny. The dream crystallizes into obsession, and the frog's hunger becomes a philosophy, a purpose, a religion of absolute consumption."
         },
         "isSpecialAttack": false
     },
@@ -63,24 +89,76 @@
         "dmgType": "Memory",
         "dmgSeverity": "Minor",
         "baseDamage": 5,
-        "preActionText": "The frog gazed at the pond, recalling the days it leapt higher than the moon, and the ripples on the water became silver ladders reaching toward forgotten stars. Each shimmer carried the weight of old triumphs, turning the pond into a scrapbook of sky-bound dreams. The night air hummed with distant applause, and the pond itself seemed to cradle those memories like glass pages in a book of daring leaps.",
+        "preActionText": "The frog pauses, and in that stillness, a gentle memory surfaces like a bubble through water. It recalls a time when it was smaller, hungrier, younger—when eating a single fly felt like a triumph. The memory is bittersweet, touched with a longing for simpler appetites, for a time when less was enough. The frog's throat rumbles softly, almost wistfully, as if remembering a version of itself it can no longer be.",
         "postActionText": {
-          "Perfect": "Fehla mirrored the frog's nostalgia, and together they found peace in the memory, letting the past wrap them in a warmth that calmed the present. For a moment, time felt kind, and the pond held them like an old lullaby.",
-          "Neutral": "Fehla tried to mimic the memory, but only ripples disturbed the pond's surface, scattering the moonlight into a thousand confused fragments. The memory frayed at the edges, leaving both wondering what piece had been misplaced.",
-          "Terrible": "Fehla grasped at the memory, but the frog's longing turned to sorrow, darkening the water, and each wave carried a deeper ache. The pond became ink, and every reflection was a reminder that some heights, once lost, bruise forever."
+          "Perfect": "Fehla's presence seems to honor this memory, and the frog accepts its own past without bitterness. The younger self is acknowledged and gently released, allowing the frog to breathe with less weight upon its shoulders.",
+          "Neutral": "Fehla and the frog share the memory of simpler times, both understanding in their separate ways what it means to have wanted less. The moment bridges two impossible beings in unexpected kinship.",
+          "Terrible": "The memory becomes a painful reminder of what the frog has lost—not gained. The innocence it remembers only emphasizes how far its hunger has grown, and the loss fuels a fresh rage. The frog's eyes harden with the knowledge of its own corruption."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "memory2",
+        "dmgType": "Memory",
+        "dmgSeverity": "Moderate",
+        "baseDamage": 5,
+        "preActionText": "The frog's breath catches as a more powerful memory surfaces—a time when it was something noble, something feared and respected. It remembers a spring when other creatures fled at its approach, when it was the apex, the unquestioned ruler of its small kingdom. The memory burns with pride and bittersweet glory, a testament to what the frog once commanded, a prowess that seemed eternal before hunger began its patient corruption.",
+        "postActionText": {
+          "Perfect": "In Fehla's silent acknowledgment, the frog's past grandeur is honored without judgment. The memory settles into something the frog can carry with dignity—not a loss, but a chapter completed. The frog straightens slightly, reconciled with its own history.",
+          "Neutral": "Fehla and the frog stand together in that glorious memory, both witnessing a time of power and dominion. The shared moment creates an unexpected bond: the silent doll somehow validates the frog's ancient glory.",
+          "Terrible": "The memory becomes a measuring stick, and the frog realizes how far it has fallen. What was once undisputed power is now just raw, undirected hunger. The fall fuels a desperate need to reclaim what was lost, and the frog's hunger becomes less about eating and more about regaining its throne."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "memory3",
+        "dmgType": "Memory",
+        "dmgSeverity": "Critical",
+        "baseDamage": 5,
+        "preActionText": "The frog becomes still, trembling as a memory of the greatest magnitude consumes it—the day it was born to the world, the moment it first breathed, first tasted flesh, first understood its own nature as hunger incarnate. This is not nostalgia; this is origin. The memory is primal, overwhelming, a foundational truth that defines everything the frog is and has become. The frog's entire being vibrates with the weight of its own genesis, the terrible knowledge that it was made to consume, that hunger is not a flaw but its very essence.",
+        "postActionText": {
+          "Perfect": "Fehla's presence somehow sanctifies this primal memory, reframing the frog's nature not as curse but as part of a larger design. The frog accepts its origins with a strange serenity, understanding that to be itself is enough. The trembling stops.",
+          "Neutral": "Fehla becomes entangled in the frog's most fundamental memory, experiencing the genesis moment alongside it. The shared understanding transcends language or reason—both recognize in that moment the ancient, unchangeable nature of things.",
+          "Terrible": "The frog's origin becomes a mandate. There is no ambiguity, no possibility of being otherwise. The memory crystallizes into absolute certainty: the frog IS hunger, and hunger IS all. The frog can never be anything else, and from this knowledge comes a ferocious acceptance of its own monstrous nature."
         },
         "isSpecialAttack": false
     },
     {
         "atkID": "goal1",
         "dmgType": "Goal",
-        "dmgSeverity": "Minor",
+        "dmgSeverity": "Blank",
         "baseDamage": 5,
-        "preActionText": "The frog fixed its eyes on a distant, glowing fly... blinking once, as if sealing a pact with the night to catch the light no matter the cost. Determination sharpened its gaze, and the air tightened like a bowstring drawn to its limit. Even the fireflies dimmed in respect, sensing a tiny quest spark into being under the weight of humid, electric air.",
+        "preActionText": "The frog's attention snaps to a single insect passing nearby—not a grand quest, but a small, immediate purpose. The prey is there, within reach, a simple goal waiting to be accomplished. The frog's focus narrows to a point, all of its being concentrated on this one, achievable desire. For this moment, the frog knows exactly what it wants and exactly how to get it.",
         "postActionText": {
-          "Perfect": "Fehla grasped the frog's ambition, helping it reach the shining fly, and for a breath both tasted a sweetness that felt like victory without harm. The glow lingered on their tongues, a bright reminder that shared goals can soften sharp edges.",
-          "Neutral": "Fehla mimicked the frog's focus, but the fly remained just out of reach, hovering like a promise that refused to land. The night held its breath, and the promise drifted farther, mocking their patience.",
-          "Terrible": "Fehla defied the frog's goal, and the fly vanished into the night, leaving only the cold sting of failure hanging between them. The darkness thickened, and the frog's eyes narrowed, thirst for victory now salted with frustration."
+          "Perfect": "Fehla's presence somehow steadies the frog's aim, and the prey is caught cleanly, simply. The frog's purpose is fulfilled without excess, and for a breath the universe feels balanced—need met with sufficiency.",
+          "Neutral": "Fehla and the frog both focus on the same prey, their attention intertwined. The catch is made, but there is something strange about sharing the moment—the victory feels both more satisfying and somehow hollow.",
+          "Terrible": "The prey escapes, and the frog's simple goal crumbles. The failure stokes something darker—a reminder that even the smallest wants can be denied, and the frog's hunger channels itself into a sharper, angrier edge."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "goal2",
+        "dmgType": "Goal",
+        "dmgSeverity": "Moderate",
+        "baseDamage": 5,
+        "preActionText": "The frog's eyes fix upon a larger prey—something that will take cunning and patience to catch. The goal crystallizes in its mind: this particular meal matters, this particular conquest will prove something. The frog positions itself carefully, body coiled like a trap about to spring, every muscle tense with purpose. This is not hunger anymore; this is ambition. This is the will to dominate a specific piece of the world.",
+        "postActionText": {
+          "Perfect": "Fehla's presence seems to guide the frog's tongue at just the right moment, and the prey is caught with a precision that feels almost choreographed. The frog's goal achieved, and in that success, something like respect passes between creature and doll.",
+          "Neutral": "Fehla and the frog hunt together, their wills aligned in a strange partnership. The prey is caught, but the victory is shared, blurring the line between predator and doll, between hunger and comfort.",
+          "Terrible": "The prey narrowly escapes, and the frog's focused ambition shatters into raw fury. The failed conquest becomes an insult, a wound to pride, and the frog's hunger transforms into something far more dangerous—a desire not just to eat, but to punish, to prove dominance at any cost."
+        },
+        "isSpecialAttack": false
+    },
+    {
+        "atkID": "goal3",
+        "dmgType": "Goal",
+        "dmgSeverity": "Critical",
+        "baseDamage": 5,
+        "preActionText": "The frog's entire being coalesces around a singular, all-consuming goal: to become the largest, the most feared, the ultimate predator of its realm. This is not appetite anymore—it is destiny. The frog's eyes glow with maniacal purpose as it fixates on the horizon, seeing not individual prey but a path of conquest stretching infinitely forward. Every cell in its body trembles with the obsession to achieve this vision, no matter the cost, no matter what must be devoured to make it real.",
+        "postActionText": {
+          "Perfect": "Fehla's silence seems to validate the frog's cosmic ambition, and the frog surges forward with renewed certainty. The goal crystallizes into absolute resolve—the plushie's presence has transformed the frog's destiny from fantasy into inevitability. There is no turning back now.",
+          "Neutral": "Fehla and the frog become locked in a shared vision of unlimited expansion and dominance. The doll somehow empowers the creature's grand design, binding them in a pact written in ambition and hunger. Together, they see the world as a kingdom waiting to be conquered.",
+          "Terrible": "The frog's goal becomes unshakeable, immutable law. Failure is not an option, only a temporary delay. The frog's hunger transforms into a philosophy of absolute consumption, a belief system that justifies any action, any consequence. The world will know the frog's will, or it will be devoured."
         },
         "isSpecialAttack": false
     },
@@ -89,11 +167,11 @@
         "dmgType": "Dream",
         "dmgSeverity": "Minor",
         "baseDamage": 10,
-        "preActionText": "Suddenly, the frog croaked a riddle about destiny and freedom, its voice bubbling like spring water while the stars leaned closer to listen. The words hopped across the pond like stones, leaving rings of curiosity that reached every shore. Each syllable glowed briefly on the water's skin, daring the night to decide whether fate was a net, a ladder, or a joke told in moonlight.",
+        "preActionText": "The frog suddenly pauses, and from its throat emerges a question—a genuine riddle posed to the night itself. It asks whether a creature can be held accountable for its nature, whether hunger is choice or curse, whether the world will judge a thing for simply being itself. The riddle is simple but profound, born from somewhere deeper than appetite. The frog's eyes seem almost wise as it waits for an answer that may never come.",
         "postActionText": {
-          "Perfect": "Fehla answered with silent wisdom, and the frog bowed in respect, the riddle dissolving into a shared understanding that freedom and fate can drink from the same stream. Their silence felt like a handshake between stars and stones, binding possibilities together.",
-          "Neutral": "Fehla echoed the riddle, but neither understood its meaning, so the question lingered between them like mist over the pond. The mist thickened, turning the night contemplative and cool, a waiting room for answers not yet born.",
-          "Terrible": "Fehla defied the frog's goal, and the fly vanished into the night, leaving the riddle to sour and the frog's eyes to harden with fresh hunger. The unanswered question clung to the air, fermenting into a challenge that scraped at both their dreams."
+          "Perfect": "Fehla's presence seems to answer without words, and the frog finds unexpected peace in the paradox. The riddle dissolves not into a solution but into acceptance—the frog understands that some questions don't need answers, only witnesses.",
+          "Neutral": "Fehla becomes lost in the riddle alongside the frog, both turning the question over in their minds. The shared contemplation creates an unexpected intimacy, two impossible beings wrestling with the same impossible question.",
+          "Terrible": "The frog receives no answer, and the silence becomes damning. The riddle curdles into resentment—if no one will answer, if no one will acknowledge its question, then perhaps the only answer is to consume the silence itself. The frog's hunger sharpens with purpose."
         },
         "isSpecialAttack": true,
         "attackConditions": ["firstTurn", "driveHpBelow:0.6"],

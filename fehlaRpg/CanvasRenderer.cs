@@ -283,12 +283,31 @@ namespace FehlaRpg
 
         public static void DrawEncounterStatus(int posX, int posY)
         {
+            Console.OutputEncoding = Encoding.UTF8; // enable utf8 for special chars
+            
             // zeichne die encounter box im hintergrund
             DrawBox(posX, posY, 70, 3);
             DrawString(posX + 2, posY + 1, Game.currentGameEncounter.encName, 20); // name des encounters
             
             // attack indicator an stelle (posX + 22, posY + 1), 3 chars breit
-            // ...
+            switch (Game.currentGameEncounter.attackForThisTurn.dmgSeverity)
+            {
+                case Severity.Minor:
+                    DrawString(posX + 22, posY + 1, "[●]", 3, ConsoleColor.Yellow, ConsoleColor.Black);
+                    break;
+                case Severity.Moderate:
+                    DrawString(posX + 22, posY + 1, "[■]", 3, ConsoleColor.Yellow, ConsoleColor.Black);
+                    break;
+                case Severity.Severe:
+                    DrawString(posX + 22, posY + 1, "[▲]", 3, ConsoleColor.Red, ConsoleColor.Black);
+                    break;
+                case Severity.Critical:
+                    DrawString(posX + 22, posY + 1, "[!]", 3, ConsoleColor.DarkRed, ConsoleColor.Black);
+                    break;
+                default:
+                    DrawString(posX + 22, posY + 1, "[-]", 3, ConsoleColor.Gray, ConsoleColor.Black);
+                    break;
+            }
 
             // DMG [■■■■■■■■  ] // wie viel schaden encounter bereits bekommen hat
             DrawString(posX + 27, posY + 1, "DMG", 3); 
@@ -393,7 +412,6 @@ namespace FehlaRpg
                 linesDrawnSoFar += maxLinesPerBubble; // move to next chunk of 3 lines for next bubble
             }
         }
-
         public static void DrawSpeechBubbleSequence(int startX, int startY, int boxWidth, int boxHeight, IEnumerable<string> bubbleTexts)
         {
             foreach (var text in bubbleTexts)
@@ -402,7 +420,6 @@ namespace FehlaRpg
                 WaitForConfirm();
             }
         }
-
         public static void ColorPixel(int x, int y, ConsoleColor fg, ConsoleColor bg)
         {
             if (x >= 0 && x < canvasX && y >= 0 && y < canvasY) // is it inside canvas?
@@ -431,7 +448,6 @@ namespace FehlaRpg
                 }
             }
         }
-
         public static void WaitForConfirm()
         {
             RenderCanvas();
@@ -443,7 +459,6 @@ namespace FehlaRpg
             while (Console.KeyAvailable) Console.ReadKey(intercept: true); // clear inputbuffer of all inputs
 
         }
-
         public static void SetGameWindow(int width, int height)
         {
             try
@@ -493,7 +508,6 @@ namespace FehlaRpg
             DrawBox(0, 0, 100, 30);
             RenderCanvas();
         }
-
         public static void DrawGameOverScreen()
         {
             // roter bg, weißer text
