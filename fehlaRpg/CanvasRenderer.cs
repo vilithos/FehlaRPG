@@ -572,6 +572,10 @@ namespace FehlaRpg
             Game.runningGame = false;
             
         }
-
+        public static void DrawOpeningScene()
+        {
+            DrawBox(0, 0, 100, 30); // draw border
+            
+        }
     }
 }
