@@ -23,9 +23,15 @@ namespace FehlaRpg
         internal static bool runningGame = true;
         public static Encounter currentGameEncounter;
         public static string endingSpeechBubble;
+        public static bool showCombatUI = false;
 
         public static void RunGame() // container that 
         {
+            // prepare game before it runs
+            runningGame = true;
+            Console.Clear();
+            Player.hope = Player.hopeMax;
+            Player.metapower = 0;
             var path = Path.Combine("..", "..", "..", "data", "encounters", "DummyFrog.json");
             currentGameEncounter = LoadEncounter(path);
 
@@ -34,28 +40,41 @@ namespace FehlaRpg
                 // selects a random encounter attack for this turn
                 currentGameEncounter.SelectRandomAttack();
                 
+                // display the encounter ascii art
+                showCombatUI = false;
+                CanvasRenderer.ClearCanvasBucket(' ');
+                CanvasRenderer.DrawBox(0,0,100,30);
+                CanvasRenderer.DrawAsciiArt(1, 1, currentGameEncounter.sprite1);
+                CanvasRenderer.DrawBorderBoxOnly(0,0,100,30);
+                CanvasRenderer.RenderCanvas();
+
                 // encounter preAttackText appears, this is the indicator for the player to react to
                 CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.preActionText);
 
                 // player turn
+                showCombatUI = true;
                 bool waitingForPlayerTurn = true;
                 while (waitingForPlayerTurn)
                 {
                     Player.CombatMenu();
-                    // debugging output
-                    // Console.WriteLine($"Player - HP: {Player.hope}, MP: {Player.metapower}");
-
                     waitingForPlayerTurn = false;
                 }
-                // debugging output
-                // Console.WriteLine(  $"=== {currentGameEncounter.encName} ===[{currentGameEncounter.patienceCurrent}/{currentGameEncounter.patienceMax}]===" +
-                //                    $"DreamHP: {currentGameEncounter.dreamHPc}/{currentGameEncounter} MemoryHP: {currentGameEncounter.memoryHPc}/ GoalHP: {currentGameEncounter.goalHPc}");
-                
+
+                // after player turn encounter updated
+                currentGameEncounter.LosePatience();
+
+                // update screen visuals
+                showCombatUI = false;
+                CanvasRenderer.ClearCanvasBucket(' ');
+                CanvasRenderer.DrawBox(0,0,100,30);
+                CanvasRenderer.DrawAsciiArt(1, 1, currentGameEncounter.sprite1);
+                CanvasRenderer.DrawBorderBoxOnly(0,0,100,30);
+                CanvasRenderer.RenderCanvas();
 
                 // encounter postAttackText appears based on player action quality
                 MatchQuality currentMatchQuality = GetMatchQuality(currentGameEncounter.attackForThisTurn, Player.playerAction);
                 string postTextKey = currentMatchQuality.ToString(); // "Perfect", "Neutral", "Terrible", "None"
-                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.postActionText[postTextKey]);
+                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.postActionText[postTextKey], waitForConfirm: true);
                 /* this switchvase was used to debug the postActionText output
                 switch (postTextKey)
                 {
@@ -70,31 +89,42 @@ namespace FehlaRpg
                         break;
                 }
                 */
+                // Wait for player to press CONFIRM before next turn
+                CanvasRenderer.WaitForConfirm();
+
+
+                // is player game over?
+                if (Player.hope <= 0)
+                {
+                    CanvasRenderer.DrawGameOverScreen();
+                }
 
                 // check if any ENDING conditions are met and display specific ending
-                if (currentGameEncounter.patienceCurrent <= 0) // if patience runs out
+                if (currentGameEncounter.patienceCurrent <= 0 || currentGameEncounter.driveHPc <= 0) // if patience runs out
                 {
                     string chosenEnding = currentGameEncounter.GetEnding();
                     switch (chosenEnding)
                     {
                         case "endDetermination":
                             endingSpeechBubble = currentGameEncounter.endDetermination;
+                            CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, endingSpeechBubble);
+                            CanvasRenderer.DrawGameOverScreen();
                             break;
                         case "endSweetSpot":
                             endingSpeechBubble = currentGameEncounter.endSweetspot;
+                            // TODO: sweetspot ending screen
                             break;
                         case "endFollower":
                             endingSpeechBubble = currentGameEncounter.endFollower;
+                            // TODO: follower ending screen
                             break;
                         case "endMadness":
                             endingSpeechBubble = currentGameEncounter.endMadness;
+                            CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, endingSpeechBubble);
+                            CanvasRenderer.DrawGameOverScreen();
                             break;
                     }
-
-                    CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, endingSpeechBubble);
-                    // game over screen
-                    // exit game loop
-                    // return to main menu
+                    break;
                 }
 
             }
@@ -219,7 +249,7 @@ namespace FehlaRpg
         public static int metapowerMax = 100;
         public static string playerAction;
         static int currentMenuSelection = 0;
-        static Button pressedButton;
+        public static Button pressedButton;
 
         // make a string[] with the options available to the player they can select
         // make userInput key affiliated with +1 and -1, I have to ensure it can not be a negative number AND if higher than max elements its set to 0 to cycle through options
@@ -234,7 +264,8 @@ namespace FehlaRpg
 
             while (true)
             {
-                CanvasRenderer.DrawCombatMenu(28, 25, combatOptions, currentMenuSelection);
+                if (Game.showCombatUI) CanvasRenderer.DrawEncounterStatus(15, 1);
+                if (Game.showCombatUI) CanvasRenderer.DrawCombatMenu(28, 25, combatOptions, currentMenuSelection);
                 /*
                 Console.WriteLine("---------- Combat Menu ----------");
 
@@ -427,7 +458,12 @@ namespace FehlaRpg
         public string endFollower;
         public string endMadness;
 
-        public Encounter(EncounterData encounterData)
+        // sprite storage for encounter ascii art
+        public string[] sprite1 {get; set;}
+        public string[] sprite2 {get; set;}
+        public string[] sprite3 {get; set;}
+
+        public Encounter(EncounterData encounterData) // -----------------------------------------------
         {
             encID = encounterData.encID;
             encName = encounterData.encName;
@@ -455,6 +491,11 @@ namespace FehlaRpg
             patienceCurrent = encounterData.patienceTotalValue;
             patienceMax = encounterData.patienceTotalValue;
             patienceLostEveryXTurn = encounterData.patienceLostEveryXTurn;
+
+            // set sprites
+            sprite1 = encounterData.sprite1;
+            sprite2 = encounterData.sprite2;
+            sprite3 = encounterData.sprite3;
 
             foreach (AttackData attkData in encounterData.allAttacks)
             {
@@ -561,6 +602,10 @@ namespace FehlaRpg
         public string endSweetspot {get; set;}
         public string endFollower {get; set;}
         public string endMadness {get; set;}
+
+        public string[] sprite1 {get; set;}
+        public string[] sprite2 {get; set;} 
+        public string[] sprite3 {get; set;}
     }
     class AttackData
     {

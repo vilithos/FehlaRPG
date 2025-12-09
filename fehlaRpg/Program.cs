@@ -7,30 +7,45 @@ namespace FehlaRpg
     {
         static void Main(string[] args)
         {
-            Console.WindowWidth = 100;
-            Console.WindowHeight = 30;
-            Console.BufferWidth = 100;
-            Console.BufferHeight = 30;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Clear();
+            CanvasRenderer.SetGameWindow(CanvasRenderer.canvasX, CanvasRenderer.canvasY);
 
+            
             Console.CursorVisible = false;  // Hide the cursor
             
             CanvasRenderer.ClearCanvasBucket(' '); // ░ ▒ ▓ '\0' ' '
             CanvasRenderer.DrawBox(0,0,100,30); // game 
-
-            CanvasRenderer.DrawTitleScreen();
-            
-            CanvasRenderer.DrawGameOverScreen();
             
             //DONE! 1. preAttackText must appear BEFORE combat menu 
             //DONE! --> damage calculation must work 
-            // 6. game over/win conditions
+            //DONE! 6. game over/win conditions
+            // win screen is not made yet
+            //DONE! Game over screen
+            //DONE! Title screen
+            // Game win screen (the story continues) "Fehla ... gave comfort to the world."
+            // story bit screen
             // 2. make combat appear through CanvasRenderer()
-            // 3. Make dummy frog Ascii appear on screen
+            // encounter patience, driveHP bar, name, attack indicator
+            //DONE! 3. Make dummy frog Ascii appear on screen
             //DONE! 4. add healthbar to dummy frog
             //DONE! 5. make combat hud appear with hp/mp
+            //DONE! call Console.clear() at specific points in code to avoid visual bugs
             // run debugger
 
-            Game.RunGame();
+
+            // MAIN GAME LOOP --> runs until terminal is closed!
+            while (true)
+            {
+                CanvasRenderer.DrawTitleScreen();
+                
+                Game.RunGame();
+
+                while (Console.KeyAvailable) Console.ReadKey(intercept: true);
+                Thread.Sleep(200);
+            }
+            
 
             /*
             int bubbleX = 10; int bubbleY = 5; 
