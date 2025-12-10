@@ -9,9 +9,14 @@ namespace FehlaRpg
         {
             // === WICHTIG FÜR DIE PROJEKTABGABE: Was ist KI generiert? ===
             // Texte in DummyFrog.json sind auf meinen ersten Entwürfen basierend generiert worden.
-            // Ein paar modulo und zeilen-berechnungen sind vereinzelt KI generiert.
+            // Ein paar modulo und zeilen-kalkulationen sind vereinzelt KI generiert.
             // Ansonsten habe ich KI nur als Lehrer benutzt um C# zu lernen und mir Konzepte zu erklären.
             // Der restliche Code ist von mir selbst geschrieben. - N.J.
+
+            // === Notizen für Präsentation ===
+            // Die meisten Kommentare sind auf Englisch von mir geschrieben, auf Deutsch hat mich das oft verwirrt mit englischen Begriffen
+            // Für die Präsentation habe ich ein paar dinge zum Code hinzugefügt, sind aber nicht commited
+            // Ausführen innerhalb VSC und außerhalb durch .exe
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
@@ -22,6 +27,14 @@ namespace FehlaRpg
             
             CanvasRenderer.ClearCanvasBucket(' '); // ░ ▒ ▓ '\0' ' '
             CanvasRenderer.DrawBox(0,0,100,30); // game 
+
+            // Ask player to resize window if too small
+            CanvasRenderer.ClearCanvasBucket(' ');
+            CanvasRenderer.DrawBox(0,0,100,30);
+            CanvasRenderer.DrawString(25, 13, " Please resize your window to fit the game borders ", 50);
+            CanvasRenderer.DrawString(27, 14, " once ready press DOWN ARROW to continue ... ", 50);
+            CanvasRenderer.RenderCanvas();
+            CanvasRenderer.WaitForConfirm();
 
             // MAIN GAME LOOP --> runs until terminal is closed!
             while (true)

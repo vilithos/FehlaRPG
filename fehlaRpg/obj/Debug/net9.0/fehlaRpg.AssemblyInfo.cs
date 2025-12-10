@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("fehlaRpg")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a996951900566212268e6267723d2b8158dc3ed")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f7a1fc83106834b0a0771f3831711510e38b2da1")]
 [assembly: System.Reflection.AssemblyProductAttribute("fehlaRpg")]
 [assembly: System.Reflection.AssemblyTitleAttribute("fehlaRpg")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

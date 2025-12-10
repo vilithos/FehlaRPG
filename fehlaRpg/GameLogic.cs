@@ -74,7 +74,8 @@ namespace FehlaRpg
                 // encounter postAttackText appears based on player action quality
                 MatchQuality currentMatchQuality = GetMatchQuality(currentGameEncounter.attackForThisTurn, Player.playerAction);
                 string postTextKey = currentMatchQuality.ToString(); // "Perfect", "Neutral", "Terrible", "None"
-                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, currentGameEncounter.attackForThisTurn.postActionText[postTextKey], waitForConfirm: true);
+                CanvasRenderer.DrawSpeechBubble(15, 20, 70, 5, 
+                            currentGameEncounter.attackForThisTurn.postActionText[postTextKey], waitForConfirm: true);
                 /* this switchvase was used to debug the postActionText output
                 switch (postTextKey)
                 {

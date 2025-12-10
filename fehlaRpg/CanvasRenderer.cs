@@ -340,8 +340,10 @@ namespace FehlaRpg
             RenderCanvas();
         }
 
-        // DrawSpeechBubble(x, y, width, height, string paragraph) it draws a speech bubble with word-wrapping and pagination for long text
-        public static void DrawSpeechBubble(int startX, int startY, int boxWidth, int boxHeight, string paragraph, bool waitForConfirm = false)
+        // DrawSpeechBubble(x, y, width, height, string paragraph) it draws a speech bubble with word-wrapping and 
+        // pagination for long text
+        public static void DrawSpeechBubble(int startX, int startY, int boxWidth, int boxHeight, string paragraph, 
+                                            bool waitForConfirm = false)
         {
             int maxLineLength = boxWidth - 4; // leave space for box borders
 
