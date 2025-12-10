@@ -1,0 +1,5 @@
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\publish\fehlaRpg.exe
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\publish\fehlaRpg.dll
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\publish\fehlaRpg.deps.json
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\publish\fehlaRpg.runtimeconfig.json
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\publish\fehlaRpg.pdb

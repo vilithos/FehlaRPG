@@ -1,0 +1,15 @@
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\fehlaRpg.exe
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\fehlaRpg.deps.json
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\fehlaRpg.runtimeconfig.json
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\fehlaRpg.dll
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\bin\Release\net9.0\fehlaRpg.pdb
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.AssemblyInfoInputs.cache
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.AssemblyInfo.cs
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.csproj.CoreCompileInputs.cache
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.sourcelink.json
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.dll
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\refint\fehlaRpg.dll
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.pdb
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\fehlaRpg.genruntimeconfig.cache
+C:\Users\Niijung\Documents\Projects\FehlaRPG\fehlaRpg\obj\Release\net9.0\ref\fehlaRpg.dll
